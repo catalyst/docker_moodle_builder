@@ -3,3 +3,5 @@ services:
   python:
     build: ./docker/python
     tty: true
+    volumes:
+      - .:/builder
