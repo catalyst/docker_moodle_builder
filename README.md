@@ -1,1 +1,1 @@
-# -docker_moodle_generator
+# docker_moodle_generator
