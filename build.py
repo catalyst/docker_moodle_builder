@@ -1,8 +1,9 @@
 import os
-from shutil import copyfile, rmtree
+import shutil
+import git
 
-def buildBranch(distro, db):
-    branchName = "{0}-{1}".format(distro, db)
+def buildBranch(distro, db, webServer):
+    branchName = "{0}-{1}-{2}".format(distro, db, webServer)
     print("Building {0}".format(branchName))
 
     # Create new branch folder
@@ -10,7 +11,7 @@ def buildBranch(distro, db):
     branchFolder = os.path.join(dirName, "build/{0}".format(branchName))
 
     if os.path.isdir(branchFolder):
-        rmtree(branchFolder)
+        shutil.rmtree(branchFolder)
     os.mkdir(branchFolder)
 
     #figure out asset path
@@ -18,12 +19,14 @@ def buildBranch(distro, db):
 
     # Copy in static README
     readmePath = os.path.join(assetPath, "static/README.md")
-    copyfile(readmePath, os.path.join(branchFolder, "README.md"))
+    shutil.copyfile(readmePath, os.path.join(branchFolder, "README.md"))
 
 
-ubuntuDistributions = ['1404', '1604', '1804']
+ubuntuDistros = ['1404', '1604', '1804']
 databases = ['mysql', 'psql']
+webServers = ['nginx', 'apache']
 
-for distro in ubuntuDistributions:
+for distro in ubuntuDistros:
     for db in databases:
-        buildBranch(distro, db)
+        for webServer in webServers:
+            buildBranch(distro, db, webServer)
