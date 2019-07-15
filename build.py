@@ -3,7 +3,6 @@ import shutil
 import git
 import jinja2
 
-
 def createBranchFolder(branchPath):
     if os.path.isdir(branchPath):
         shutil.rmtree(branchPath)
@@ -15,9 +14,12 @@ def createBranchFolder(branchPath):
     dockerMoodlePath = os.path.join(dockerPath, "moodle")
     os.mkdir(dockerMoodlePath)
 
-def addStaticFile(assetPath, branchPath, fileName):
-    readmePath = os.path.join(assetPath, fileName)
-    shutil.copyfile(readmePath, os.path.join(branchPath, fileName))
+def addStaticFile(assetPath, branchPath, fileName, outputName=None):
+    if outputName is None:
+        outputName = fileName
+
+    filePath = os.path.join(assetPath, fileName)
+    shutil.copyfile(filePath, os.path.join(branchPath, outputName))
 
 
 def addTemplatedFile(assetPath, branchPath, templateName, templateData):
@@ -46,6 +48,7 @@ def buildBranch(ubuntuVersion, db):
     addStaticFile(assetPath, branchPath, 'README.md')
     addStaticFile(assetPath, dockerMoodlePath, 'nginx.conf')
     addStaticFile(assetPath, dockerMoodlePath, 'xdebug.ini')
+    addStaticFile(assetPath, branchPath, 'gitignore', '.gitignore')
 
     packages = ['curl', 'locales', 'nginx', 'vim']
     packages += ubuntuVersion['packages']
