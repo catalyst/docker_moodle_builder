@@ -27,7 +27,7 @@ services:
     volumes:
       - 'testdb:/var/lib/postgresql'
 {% elif db == 'mysql' %}
-  moodle-db:
+  db:
     image: mysql:5.5
     restart: always
     environment:
@@ -38,7 +38,7 @@ services:
     command: mysqld --innodb-file-format=Barracuda --innodb_file_per_table=1 --innodb_large_prefix=1
     volumes:
       - 'db:/var/lib/mysql'
-  moodle-test-db:
+  test-db:
     image: mysql:5.5
     restart: always
     environment:
