@@ -19,6 +19,8 @@ RUN mkdir /var/lib/sitedata \
 
 COPY nginx-site /etc/nginx/sites-available/default
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY xdebug.ini {{ xdebugPath }}
+
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 

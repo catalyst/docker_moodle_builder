@@ -45,6 +45,7 @@ def buildBranch(ubuntuVersion, db):
 
     addStaticFile(assetPath, branchPath, 'README.md')
     addStaticFile(assetPath, dockerMoodlePath, 'nginx.conf')
+    addStaticFile(assetPath, dockerMoodlePath, 'xdebug.ini')
 
     packages = ['curl', 'locales', 'nginx', 'vim']
     packages += ubuntuVersion['packages']
@@ -58,6 +59,7 @@ def buildBranch(ubuntuVersion, db):
         {
             'imageTag': ubuntuVersion['imageTag'],
             'packages': packages,
+            'xdebugPath': ubuntuVersion['xdebugPath'],
         }
     )
 
@@ -95,6 +97,7 @@ ubuntuVersions = [
         'imageTag':     '14.04',
         'fpmService':   'php5-fpm',
         'fpmSock':      '/var/run/php5-fpm.sock',
+        'xdebugPath':   '/etc/php5/mods-available/xdebug.ini',
         'packages':     [
             'php5',
             'php5-cli',
@@ -114,6 +117,7 @@ ubuntuVersions = [
         'imageTag':     '16.04',
         'fpmService':   'php7.0-fpm',
         'fpmSock':      '/var/run/php/php7.0-fpm.sock',
+        'xdebugPath':   '/etc/php/7.0/mods-available/xdebug.ini',
         'packages':     [
             'php',
             'php-cli',
@@ -137,6 +141,7 @@ ubuntuVersions = [
         'imageTag':     '18.04',
         'fpmService':   'php7.2-fpm',
         'fpmSock':      '/var/run/php/php7.2-fpm.sock',
+        'xdebugPath':   '/etc/php/7.2/mods-available/xdebug.ini',
         'packages': [
             'php',
             'php-cli',
