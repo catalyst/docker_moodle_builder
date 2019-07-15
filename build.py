@@ -1,32 +1,180 @@
 import os
 import shutil
 import git
+import jinja2
 
-def buildBranch(distro, db, webServer):
-    branchName = "{0}-{1}-{2}".format(distro, db, webServer)
+
+def createBranchFolder(branchPath):
+    if os.path.isdir(branchPath):
+        shutil.rmtree(branchPath)
+    os.mkdir(branchPath)
+
+    dockerPath = os.path.join(branchPath, "docker")
+    os.mkdir(dockerPath)
+
+    dockerMoodlePath = os.path.join(dockerPath, "moodle")
+    os.mkdir(dockerMoodlePath)
+
+def addStaticFile(assetPath, branchPath, fileName):
+    readmePath = os.path.join(assetPath, fileName)
+    shutil.copyfile(readmePath, os.path.join(branchPath, fileName))
+
+
+def addTemplatedFile(assetPath, branchPath, templateName, templateData):
+    templateLoader = jinja2.FileSystemLoader(searchpath=assetPath)
+    templateEnv = jinja2.Environment(loader=templateLoader, trim_blocks=True, lstrip_blocks=True)
+    template = templateEnv.get_template("{0}.j2".format(templateName))
+    outputPath = os.path.join(branchPath, templateName)
+
+    with open(outputPath, 'w') as f:
+            f.write(template.render(templateData))
+
+
+def buildBranch(ubuntuVersion, db):
+    branchName = "{0}-{1}".format(ubuntuVersion['name'], db['name'])
     print("Building {0}".format(branchName))
 
-    # Create new branch folder
     dirName = os.path.dirname(__file__)
-    branchFolder = os.path.join(dirName, "build/{0}".format(branchName))
+    branchPath = os.path.join(dirName, "build/{0}".format(branchName))
+    dockerMoodlePath = os.path.join(branchPath, "docker/moodle")
 
-    if os.path.isdir(branchFolder):
-        shutil.rmtree(branchFolder)
-    os.mkdir(branchFolder)
+    createBranchFolder(branchPath)
 
-    #figure out asset path
-    assetPath = os.path.join(dirName, "assets")
+    #figure out asset paths
+    assetPath = os.path.join(dirName, 'assets')
 
-    # Copy in static README
-    readmePath = os.path.join(assetPath, "static/README.md")
-    shutil.copyfile(readmePath, os.path.join(branchFolder, "README.md"))
+    addStaticFile(assetPath, branchPath, 'README.md')
+    addStaticFile(assetPath, dockerMoodlePath, 'nginx.conf')
+
+    packages = ['curl', 'locales', 'nginx', 'vim']
+    packages += ubuntuVersion['packages']
+    packages += db['packages'][ubuntuVersion['name']]
+    packages.sort()
+
+    addTemplatedFile(
+        assetPath,
+        dockerMoodlePath,
+        'Dockerfile',
+        {
+            'imageTag': ubuntuVersion['imageTag'],
+            'packages': packages,
+        }
+    )
+
+    addTemplatedFile(
+        assetPath,
+        dockerMoodlePath,
+        'entrypoint.sh',
+        {
+            'fpmService': ubuntuVersion['fpmService'],
+        }
+    )
+
+    addTemplatedFile(
+        assetPath,
+        dockerMoodlePath,
+        'nginx-site',
+        {
+            'fpmSock': ubuntuVersion['fpmSock'],
+        }
+    )
+
+    addTemplatedFile(
+        assetPath,
+        branchPath,
+        'docker-compose.yml',
+        {
+            'db': db['name']
+        }
+    )
 
 
-ubuntuDistros = ['1404', '1604', '1804']
-databases = ['mysql', 'psql']
-webServers = ['nginx', 'apache']
+ubuntuVersions = [
+    {
+        'name':         '1404',
+        'imageTag':     '14.04',
+        'fpmService':   'php5-fpm',
+        'fpmSock':      '/var/run/php5-fpm.sock',
+        'packages':     [
+            'php5',
+            'php5-cli',
+            'php5-curl',
+            'php5-fpm',
+            'php5-gd',
+            'php5-intl',
+            'php5-ldap',
+            'php5-xdebug',
+            'php5-xmlrpc',
+            'php-soap',
+        ],
+    },
 
-for distro in ubuntuDistros:
+    {
+        'name':         '1604',
+        'imageTag':     '16.04',
+        'fpmService':   'php7.0-fpm',
+        'fpmSock':      '/var/run/php/php7.0-fpm.sock',
+        'packages':     [
+            'php',
+            'php-cli',
+            'php-curl',
+            'php-fpm',
+            'php-gd',
+            'php-intl',
+            'php-ldap',
+            'php-mbstring',
+            'php-mysql',
+            'php-soap',
+            'php-xdebug',
+            'php-xmlrpc',
+            'php-xml',
+            'php-zip',
+        ],
+    },
+
+    {
+        'name':         '1804',
+        'imageTag':     '18.04',
+        'fpmService':   'php7.2-fpm',
+        'fpmSock':      '/var/run/php/php7.2-fpm.sock',
+        'packages': [
+            'php',
+            'php-cli',
+            'php-curl',
+            'php-fpm',
+            'php-gd',
+            'php-intl',
+            'php-ldap',
+            'php-mbstring',
+            'php-mysql',
+            'php-soap',
+            'php-xdebug',
+            'php-xmlrpc',
+            'php-xml',
+            'php-zip',
+        ],
+    },
+]
+
+databases = [
+    {
+        'name': 'mysql',
+        'packages': {
+            '1404': ['php5-mysql'],
+            '1604': ['php-mysql'],
+            '1804': ['php-mysql'],
+        },
+    },
+    {
+        'name': 'psql',
+        'packages': {
+            '1404': ['php5-pgsql'],
+            '1604': ['php-pgsql'],
+            '1804': ['php-pgsql'],
+        },
+    },
+]
+
+for ubuntuVersion in ubuntuVersions:
     for db in databases:
-        for webServer in webServers:
-            buildBranch(distro, db, webServer)
+        buildBranch(ubuntuVersion, db)

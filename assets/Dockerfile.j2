@@ -1,0 +1,27 @@
+FROM ubuntu:{{ imageTag }}
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -y \
+    && apt-get install -y \
+{% for package in packages %}
+    {{ package }} {{ "\\" if not loop.last }}
+{% endfor %}
+
+RUN locale-gen en_AU.UTF-8
+
+RUN cd /usr/local/lib/ && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
+
+RUN mkdir /var/lib/sitedata \
+    && chmod 0777 /var/lib/sitedata \
+    && mkdir /var/lib/testsitedata \
+    && chmod 0777 /var/lib/testsitedata
+
+COPY nginx-site /etc/nginx/sites-available/default
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+
+WORKDIR /siteroot
+
+ENTRYPOINT ["/entrypoint.sh"]
