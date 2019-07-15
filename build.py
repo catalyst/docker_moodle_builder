@@ -95,6 +95,15 @@ def buildBranch(ubuntuVersion, db):
         }
     )
 
+    addTemplatedFile(
+        assetPath,
+        branchPath,
+        'moodle-config',
+        {
+            'db': db['name']
+        }
+    )
+
 
 ubuntuVersions = [
     {
