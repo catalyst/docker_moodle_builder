@@ -42,13 +42,15 @@ def buildBranch(ubuntuVersion, db):
 
     createBranchFolder(branchPath)
 
-    #figure out asset paths
     assetPath = os.path.join(dirName, 'assets')
 
     addStaticFile(assetPath, branchPath, 'README.md')
+    addStaticFile(assetPath, branchPath, 'control')
+    os.chmod(os.path.join(branchPath, 'control'), 0o775)
+
+    addStaticFile(assetPath, branchPath, 'gitignore', '.gitignore')
     addStaticFile(assetPath, dockerMoodlePath, 'nginx.conf')
     addStaticFile(assetPath, dockerMoodlePath, 'xdebug.ini')
-    addStaticFile(assetPath, branchPath, 'gitignore', '.gitignore')
 
     packages = ['curl', 'locales', 'nginx', 'vim']
     packages += ubuntuVersion['packages']
