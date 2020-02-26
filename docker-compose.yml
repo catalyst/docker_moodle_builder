@@ -1,7 +1,10 @@
-version: '3'
+version: "3"
 services:
   python:
     build: ./docker/python
     tty: true
     volumes:
       - .:/builder
+      - $SSH_AUTH_SOCK:/ssh-agent # Forward local machine SSH key to docker
+    environment:
+      SSH_AUTH_SOCK: /ssh-agent
