@@ -45,3 +45,12 @@ Enter test database container:
 ```
 ./control testdb
 ```
+
+## Test Environment
+To set up test environment, enter web container:
+
+```
+composer install
+
+php admin/tool/phpunit/cli/init.php
+```
