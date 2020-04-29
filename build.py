@@ -55,6 +55,12 @@ def buildBranch(ubuntuVersion, db):
     addStaticFile(assetPath, branchPath, "gitignore", ".gitignore")
     addStaticFile(assetPath, dockerMoodlePath, "nginx.conf")
     addStaticFile(assetPath, dockerMoodlePath, "xdebug.ini")
+    addStaticFile(
+        assetPath,
+        dockerMoodlePath,
+        "php-{0}.ini".format(ubuntuVersion["name"]),
+        "php.ini",
+    )
 
     packages = ["curl", "locales", "nginx", "vim"]
     packages += ubuntuVersion["packages"]
@@ -69,6 +75,7 @@ def buildBranch(ubuntuVersion, db):
             "imageTag": ubuntuVersion["imageTag"],
             "packages": packages,
             "xdebugPath": ubuntuVersion["xdebugPath"],
+            "phpIniPath": ubuntuVersion["phpIniPath"],
         },
     )
 
@@ -98,6 +105,7 @@ ubuntuVersions = [
         "fpmService": "php5-fpm",
         "fpmSock": "/var/run/php5-fpm.sock",
         "xdebugPath": "/etc/php5/mods-available/xdebug.ini",
+        "phpIniPath": "/etc/php5/fpm/php.ini",
         "packages": [
             "php5",
             "php5-cli",
@@ -117,6 +125,7 @@ ubuntuVersions = [
         "fpmService": "php7.0-fpm",
         "fpmSock": "/var/run/php/php7.0-fpm.sock",
         "xdebugPath": "/etc/php/7.0/mods-available/xdebug.ini",
+        "phpIniPath": "/etc/php/7.0/fpm/php.ini",
         "packages": [
             "php",
             "php-cli",
@@ -140,6 +149,7 @@ ubuntuVersions = [
         "fpmService": "php7.2-fpm",
         "fpmSock": "/var/run/php/php7.2-fpm.sock",
         "xdebugPath": "/etc/php/7.2/mods-available/xdebug.ini",
+        "phpIniPath": "/etc/php/7.2/fpm/php.ini",
         "packages": [
             "php",
             "php-cli",
