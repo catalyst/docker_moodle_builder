@@ -9,7 +9,7 @@ services:
       - ./siteroot:/siteroot
 {% if db == 'psql' %}
   db:
-    image: postgres:9.6
+    image: postgres:{{ dbImageTag }}
     restart: always
     environment:
       POSTGRES_PASSWORD: password
@@ -18,7 +18,7 @@ services:
     volumes:
       - 'db:/var/lib/postgresql'
   test-db:
-    image: postgres:9.6
+    image: postgres:{{ dbImageTag }}
     restart: always
     environment:
       POSTGRES_PASSWORD: password
@@ -28,7 +28,7 @@ services:
       - 'testdb:/var/lib/postgresql'
 {% elif db == 'mysql' %}
   db:
-    image: mysql:5.6
+    image: mysql:{{ dbImageTag }}
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password
@@ -39,7 +39,7 @@ services:
     volumes:
       - 'db:/var/lib/mysql'
   test-db:
-    image: mysql:5.6
+    image: mysql:{{ dbImageTag }}
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password

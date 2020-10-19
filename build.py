@@ -83,17 +83,26 @@ def buildBranch(ubuntuVersion, db):
         assetPath,
         dockerMoodlePath,
         "entrypoint.sh",
-        {"fpmService": ubuntuVersion["fpmService"],},
+        {
+            "fpmService": ubuntuVersion["fpmService"],
+        },
     )
 
     addTemplatedFile(
         assetPath,
         dockerMoodlePath,
         "nginx-site",
-        {"fpmSock": ubuntuVersion["fpmSock"],},
+        {
+            "fpmSock": ubuntuVersion["fpmSock"],
+        },
     )
 
-    addTemplatedFile(assetPath, branchPath, "docker-compose.yml", {"db": db["name"]})
+    addTemplatedFile(
+        assetPath,
+        branchPath,
+        "docker-compose.yml",
+        {"db": db["name"], "dbImageTag": db["imageTag"][ubuntuVersion["name"]]},
+    )
 
     addTemplatedFile(assetPath, branchPath, "moodle-config", {"db": db["name"]})
 
@@ -167,6 +176,30 @@ ubuntuVersions = [
             "php-zip",
         ],
     },
+    {
+        "name": "2004",
+        "imageTag": "20.04",
+        "fpmService": "php7.4-fpm",
+        "fpmSock": "/var/run/php/php7.4-fpm.sock",
+        "xdebugPath": "/etc/php/7.4/mods-available/xdebug.ini",
+        "phpIniPath": "/etc/php/7.4/fpm/php.ini",
+        "packages": [
+            "php",
+            "php-cli",
+            "php-curl",
+            "php-fpm",
+            "php-gd",
+            "php-intl",
+            "php-ldap",
+            "php-mbstring",
+            "php-mysql",
+            "php-soap",
+            "php-xdebug",
+            "php-xmlrpc",
+            "php-xml",
+            "php-zip",
+        ],
+    },
 ]
 
 databases = [
@@ -176,6 +209,13 @@ databases = [
             "1404": ["php5-mysql"],
             "1604": ["php-mysql"],
             "1804": ["php-mysql"],
+            "2004": ["php-mysql"],
+        },
+        "imageTag": {
+            "1404": "5.6",
+            "1604": "5.6",
+            "1804": "5.6",
+            "2004": "5.7",
         },
     },
     {
@@ -184,6 +224,13 @@ databases = [
             "1404": ["php5-pgsql"],
             "1604": ["php-pgsql"],
             "1804": ["php-pgsql"],
+            "2004": ["php-pgsql"],
+        },
+        "imageTag": {
+            "1404": "9.6",
+            "1604": "9.6",
+            "1804": "9.6",
+            "2004": "9.6",
         },
     },
 ]

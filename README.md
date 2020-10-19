@@ -20,4 +20,9 @@ Python script that build various branches for https://github.com/catalyst/docker
     cd 1804-mysql && git init && git add . && git checkout -b 1804-mysql && git commit -m "Build" && git remote add origin git@github.com:catalyst/docker_moodle.git && git push -u origin 1804-mysql -f && cd ..
 
     cd 1804-psql && git init && git add . && git checkout -b 1804-psql && git commit -m "Build" && git remote add origin git@github.com:catalyst/docker_moodle.git && git push -u origin 1804-psql -f && cd ..
+
+    cd 2004-mysql && git init && git add . && git checkout -b 2004-mysql && git commit -m "Build" && git remote add origin git@github.com:catalyst/docker_moodle.git && git push -u origin 2004-mysql -f && cd ..
+
+    cd 2004-psql && git init && git add . && git checkout -b 2004-psql && git commit -m "Build" && git remote add origin git@github.com:catalyst/docker_moodle.git && git push -u origin 2004-psql -f && cd ..
+
 ```
