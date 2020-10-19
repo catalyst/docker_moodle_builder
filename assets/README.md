@@ -23,7 +23,7 @@ git clone git@github.com:moodle/moodle.git siteroot
 3. Copy site config across
 
 ```
-cp moodle/moodle-config siteroot/config.php
+cp moodle-config siteroot/config.php
 ```
 
 4. Start containers
