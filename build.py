@@ -150,6 +150,7 @@ ubuntuVersions = [
             "php-xmlrpc",
             "php-xml",
             "php-zip",
+            "php-bcmath",
         ],
     },
     {
@@ -174,6 +175,7 @@ ubuntuVersions = [
             "php-xmlrpc",
             "php-xml",
             "php-zip",
+            "php-bcmath",
         ],
     },
     {
@@ -198,6 +200,7 @@ ubuntuVersions = [
             "php-xmlrpc",
             "php-xml",
             "php-zip",
+            "php-bcmath",
         ],
     },
 ]
