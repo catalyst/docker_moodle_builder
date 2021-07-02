@@ -36,7 +36,7 @@ def addTemplatedFile(assetPath, branchPath, templateName, templateData):
         f.write(template.render(templateData))
 
 
-def buildBranch(ubuntuVersion, db):
+def buildBranch(ubuntuVersion, db, dbcommand, dbrestore):
     branchName = "{0}-{1}".format(ubuntuVersion["name"], db["name"])
     print("Building {0}".format(branchName))
 
@@ -49,8 +49,6 @@ def buildBranch(ubuntuVersion, db):
     assetPath = os.path.join(dirName, "assets")
 
     addStaticFile(assetPath, branchPath, "README.md")
-    addStaticFile(assetPath, branchPath, "control")
-    os.chmod(os.path.join(branchPath, "control"), 0o775)
 
     addStaticFile(assetPath, branchPath, "gitignore", ".gitignore")
     addStaticFile(assetPath, dockerMoodlePath, "nginx.conf")
@@ -62,7 +60,7 @@ def buildBranch(ubuntuVersion, db):
         "php.ini",
     )
 
-    packages = ["curl", "locales", "nginx", "vim"]
+    packages = ["curl", "locales", "nginx", "vim", "php-tideways", "graphviz"]
     packages += ubuntuVersion["packages"]
     packages += db["packages"][ubuntuVersion["name"]]
     packages.sort()
@@ -105,6 +103,17 @@ def buildBranch(ubuntuVersion, db):
     )
 
     addTemplatedFile(assetPath, branchPath, "moodle-config", {"db": db["name"]})
+
+    addTemplatedFile(
+        assetPath,
+        branchPath,
+        "control",
+        {
+            "dbrestore" : dbrestore[db["name"]],
+            "dbcommand" : dbcommand[db["name"]],
+        },
+    )
+    os.chmod(os.path.join(branchPath, "control"), 0o775)
 
 
 ubuntuVersions = [
@@ -238,6 +247,16 @@ databases = [
     },
 ]
 
+dbcommand = {
+    "mysql" : "mysql -u root --password=password",
+    "psql" : "psql -U moodle_user moodle",
+}
+
+dbrestore = {
+    "mysql" : "gunzip < $2 | sed -r '/INSERT INTO `(mdl_logstore_standard_log|mdl_analytics|mdl_log).*`/d' | docker exec -i $dbcont mysql -uroot -ppassword",
+    "psql" : "gunzip < $2 | docker exec -i $dbcont psql -U moodle_user postgres",
+}
+
 for ubuntuVersion in ubuntuVersions:
     for db in databases:
-        buildBranch(ubuntuVersion, db)
+        buildBranch(ubuntuVersion, db, dbcommand, dbrestore)
