@@ -12,12 +12,17 @@ case "$1" in
 
     db)
         dbcont="$(docker-compose ps -q db)"
-        docker exec -ti $dbcont psql -U moodle_user moodle
+        docker exec -ti $dbcont {{ dbcommand }}
         ;;
 
     testdb)
         dbtestcont="$(docker-compose ps -q test-db)"
-        docker exec -ti $dbtestcont psql -U moodle_user moodle
+        docker exec -ti $dbtestcont {{ dbcommand }}
+        ;;
+
+    dbrestore)
+        dbcont="$(docker-compose ps -q db)"
+        {{ dbrestore }}
         ;;
 
     *)
