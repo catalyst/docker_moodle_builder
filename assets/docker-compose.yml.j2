@@ -10,7 +10,6 @@ services:
 {% if db == 'psql' %}
   db:
     image: postgres:{{ dbImageTag }}
-    restart: always
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: moodle
@@ -19,7 +18,6 @@ services:
       - 'db:/var/lib/postgresql'
   test-db:
     image: postgres:{{ dbImageTag }}
-    restart: always
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: moodle
@@ -29,7 +27,6 @@ services:
 {% elif db == 'mysql' %}
   db:
     image: mysql:{{ dbImageTag }}
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: moodle
@@ -40,7 +37,6 @@ services:
       - 'db:/var/lib/mysql'
   test-db:
     image: mysql:{{ dbImageTag }}
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: moodle
