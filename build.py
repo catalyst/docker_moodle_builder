@@ -53,6 +53,9 @@ def buildBranch(ubuntuVersion, db, dbcommand, dbrestore):
     addStaticFile(assetPath, branchPath, "gitignore", ".gitignore")
     addStaticFile(assetPath, dockerMoodlePath, "nginx.conf")
     addStaticFile(assetPath, dockerMoodlePath, "xdebug.ini")
+    addStaticFile(assetPath, dockerMoodlePath, "apply-template.sh")
+    addStaticFile(assetPath, dockerMoodlePath, "self-signed.conf")
+    addStaticFile(assetPath, dockerMoodlePath, "ssl-params.conf")
     addStaticFile(
         assetPath,
         dockerMoodlePath,
@@ -69,6 +72,18 @@ def buildBranch(ubuntuVersion, db, dbcommand, dbrestore):
         assetPath,
         dockerMoodlePath,
         "Dockerfile",
+        {
+            "imageTag": ubuntuVersion["imageTag"],
+            "packages": packages,
+            "xdebugPath": ubuntuVersion["xdebugPath"],
+            "phpIniPath": ubuntuVersion["phpIniPath"],
+        },
+    )
+
+    addTemplatedFile(
+        assetPath,
+        dockerMoodlePath,
+        "Dockerfile-template",
         {
             "imageTag": ubuntuVersion["imageTag"],
             "packages": packages,
@@ -97,12 +112,29 @@ def buildBranch(ubuntuVersion, db, dbcommand, dbrestore):
 
     addTemplatedFile(
         assetPath,
+        dockerMoodlePath,
+        "nginx-site-template",
+        {
+            "fpmSock": ubuntuVersion["fpmSock"],
+        },
+    )
+
+    addTemplatedFile(
+        assetPath,
         branchPath,
         "docker-compose.yml",
         {"db": db["name"], "dbImageTag": db["imageTag"][ubuntuVersion["name"]]},
     )
 
+    addTemplatedFile(
+        assetPath,
+        branchPath,
+        "docker-compose-template.yml",
+        {"db": db["name"], "dbImageTag": db["imageTag"][ubuntuVersion["name"]]},
+    )
+
     addTemplatedFile(assetPath, branchPath, "moodle-config", {"db": db["name"]})
+    addTemplatedFile(assetPath, branchPath, "moodle-config-template", {"db": db["name"]})
 
     addTemplatedFile(
         assetPath,

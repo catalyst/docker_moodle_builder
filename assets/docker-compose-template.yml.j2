@@ -1,10 +1,11 @@
-version: '3'
+version: '3.2'
 
 services:
   moodle:
     build: ./docker/moodle
     ports:
-      - "127.0.0.1:80:80"
+      - "127.0.0.1:%%DOCKER_PORT%%:%%DOCKER_PORT%%"
+      - "127.0.0.1:%%DOCKER_PORT_SSL%%:%%DOCKER_PORT_SSL%%"
     volumes:
       - ./siteroot:/siteroot
 {% if db == 'psql' %}
@@ -49,7 +50,7 @@ services:
   mailcatcher:
     image: schickling/mailcatcher
     ports:
-      - "127.0.0.1:1080:1080"
+      - "127.0.0.1:%%DOCKER_PORT_MAILCATCHER%%:%%DOCKER_PORT_MAILCATCHER%%"
 volumes:
     db:
     testdb:
