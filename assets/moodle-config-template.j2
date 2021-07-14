@@ -34,7 +34,7 @@ $CFG->phpunit_dbpass    = 'password';
 $CFG->phpunit_prefix    = 'phpu_';
 $CFG->phpunit_dataroot = '/var/lib/testsitedata';
 
-$CFG->wwwroot   = 'http://localhost';
+$CFG->wwwroot   = '%%WWWROOT_METHOD%%://%%WWWROOT_HOSTNAME%%:%%WWWROOT_PORT%%';
 
 $CFG->dataroot  = '/var/lib/sitedata';
 
@@ -44,7 +44,18 @@ $CFG->admin     = 'admin';
 @error_reporting(E_ALL | E_STRICT); // NOT FOR PRODUCTION SERVERS!
 $CFG->debug = (E_ALL | E_STRICT);   // === DEBUG_DEVELOPER - NOT FOR PRODUCTION SERVERS!
 
+// Uncomment this line to enable mailcatcher (and comment out $CFG->noemailever = true;)
+// $CFG->smtphosts = "mailcatcher:%%DOCKER_PORT_MAILCATCHER%%";
 $CFG->noemailever = true;
+
+// Uncomment these to increase / control debugging:
+// $CFG->debug = E_ALL;
+// $CFG->debugdisplay = 1;
+// $CFG->langstringcache = 0;
+// $CFG->cachetemplates = 0;
+// $CFG->cachejs = 0;
+// $CFG->perfdebug = 15;
+// $CFG->debugpageinfo = 1;
 
 $CFG->directorypermissions = 0777;
 
